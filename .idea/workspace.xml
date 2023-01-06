@@ -5,14 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1b50bed-8aeb-4c40-8e45-a255148a4a23" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/DirectoryFile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/util/FileSystemUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/SymbolicLinkFile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/util/LookupResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/FileSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/FileSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/DirectoryFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/DirectoryFile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/File.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/File.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/RegularFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/RegularFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/descriptor/FileDescriptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/descriptor/FileDescriptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/util/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/util/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/util/FileSystemUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/util/FileSystemUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/operatingsystem/OperatingSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/operatingsystem/OperatingSystem.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +83,7 @@
       <option name="presentableId" value="Default" />
       <updated>1672873093865</updated>
       <workItem from="1672873096101" duration="3777000" />
-      <workItem from="1673018993669" duration="11719000" />
+      <workItem from="1673018993669" duration="22153000" />
     </task>
     <servers />
   </component>
@@ -104,9 +105,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/demian/Main.java</url>
-          <line>8</line>
-          <option name="timeStamp" value="1" />
+          <url>file://$PROJECT_DIR$/src/main/java/edu/demian/filesystem/FileSystem.java</url>
+          <line>161</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

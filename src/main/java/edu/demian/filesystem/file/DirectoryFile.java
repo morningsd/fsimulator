@@ -7,24 +7,27 @@ import java.util.List;
 
 public class DirectoryFile extends File {
 
-    private static final List<File> directoryContent = new LinkedList<>();
+    private final List<File> directoryContent = new LinkedList<>();
+    private static final File CURRENT_DIRECTORY_LINK = new DirectoryFile(FileSystem.LINK_TO_CURRENT_DIRECTORY, null);
+    private static final File UPPER_DIRECTORY_LINK = new DirectoryFile(FileSystem.LINK_TO_UPPER_DIRECTORY, null);
+    private DirectoryFile parentDirectory;
 
-    static {
-//        directoryContent.add(new DirectoryFile(FileSystem.LINK_TO_CURRENT_DIRECTORY));
-//        if (!name.equals(FileSystem.LINK_TO_ROOT_DIRECTORY)) {
-//            directoryContent.add(new DirectoryFile(FileSystem.LINK_TO_UPPER_DIRECTORY));
-//        }
-    }
-
-    private DirectoryFile(String name) {
+    private DirectoryFile(String name, DirectoryFile parentDirectory) {
         super(name);
+        this.parentDirectory = parentDirectory;
+        directoryContent.add(CURRENT_DIRECTORY_LINK);
+        directoryContent.add(UPPER_DIRECTORY_LINK);
     }
 
-    public static DirectoryFile createInstance(String name) {
-        return new DirectoryFile(name);
+    public static DirectoryFile createInstance(String name, DirectoryFile directoryFile) {
+        return new DirectoryFile(name, directoryFile);
     }
 
     public List<File> getContent() {
         return directoryContent;
+    }
+
+    public DirectoryFile getParentDirectory() {
+        return parentDirectory;
     }
 }

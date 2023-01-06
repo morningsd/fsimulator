@@ -22,6 +22,8 @@ public abstract class File {
         }
         this.name = name;
         this.descriptor = new FileDescriptor(FileSystem.getInstance().getAvailableFileDescriptorId());
+        blockList.add(new Block());
+        blockList.add(new Block());
     }
 
     public FileDescriptor getDescriptor() {
@@ -32,4 +34,7 @@ public abstract class File {
         return name;
     }
 
+    public List<Block> getBlockList() {
+        return blockList;
+    }
 }
