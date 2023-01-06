@@ -6,7 +6,7 @@ public class RegularFile extends File {
         super(name);
     }
 
-    public static RegularFile getInstance(String name) {
+    public static RegularFile createInstance(String name) {
         return new RegularFile(name);
     }
 

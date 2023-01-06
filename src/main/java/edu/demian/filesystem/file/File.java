@@ -10,16 +10,26 @@ import java.util.List;
 
 public abstract class File {
 
-    private String name;
+    private final FileDescriptor descriptor;
 
-    private FileDescriptor fileDescriptor;
+    private String name;
 
     private List<Block> blockList = new LinkedList<>();
 
     public File(String name) {
-        this.name = name;
         if (!FileSystem.getInstance().isFileDescriptorAvailable()) {
              throw new FileCreationException("Can't create a file: [no file descriptors available]");
         }
+        this.name = name;
+        this.descriptor = new FileDescriptor(FileSystem.getInstance().getAvailableFileDescriptorId());
     }
+
+    public FileDescriptor getDescriptor() {
+        return descriptor;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }
