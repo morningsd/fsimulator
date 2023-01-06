@@ -5,20 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1b50bed-8aeb-4c40-8e45-a255148a4a23" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/FileSystem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/exception/FileCreationException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/File.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/RegularFile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/descriptor/FileDescriptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/util/Block.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/filesystem/file/util/FileType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/edu/demian/operatingsystem/OperatingSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/edu/demian/operatingsystem/OperatingSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/demian/operatingsystem/OperatingSystem.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +75,7 @@
       <option name="presentableId" value="Default" />
       <updated>1672873093865</updated>
       <workItem from="1672873096101" duration="3777000" />
-      <workItem from="1673018993669" duration="5196000" />
+      <workItem from="1673018993669" duration="5738000" />
     </task>
     <servers />
   </component>

@@ -8,6 +8,10 @@ import java.util.List;
 public class FileSystem {
 
     private final int numberOfDescriptors;
+    private static final String ROOT_DIRECTORY = "/";
+    private static final String LINK_TO_CURRENT_DIRECTORY = ".";
+    private static final String LINK_TO_UPPER_DIRECTORY = "..";
+    private String CURRENT_DIRECTORY = ROOT_DIRECTORY;
 
     private List<FileDescriptor> fileDescriptors = new LinkedList<>();
 
@@ -24,7 +28,7 @@ public class FileSystem {
         return instance;
     }
 
-    public synchronized static void initializeFileSystem(int numberOfDescriptors) {
+    public synchronized static void initializeFileSystem(final int numberOfDescriptors) {
         if (instance != null) {
             throw new RuntimeException("File system is already initialized");
         }
@@ -35,4 +39,7 @@ public class FileSystem {
         return fileDescriptors.size() <= numberOfDescriptors;
     }
 
+    public void printFileInformation(String pathname) {
+        
+    }
 }

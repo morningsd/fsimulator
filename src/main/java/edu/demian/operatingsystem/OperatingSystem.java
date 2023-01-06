@@ -6,7 +6,8 @@ public class OperatingSystem {
 
     private static volatile OperatingSystem instance;
 
-    private OperatingSystem() {}
+    private OperatingSystem() {
+    }
 
     public static OperatingSystem getInstance() {
         if (instance == null) {
@@ -19,12 +20,12 @@ public class OperatingSystem {
         return instance;
     }
 
-    public void mkfs(int numberOfDescriptors) {
+    public void mkfs(final int numberOfDescriptors) {
         FileSystem.initializeFileSystem(numberOfDescriptors);
         System.out.printf("File system was initialized with %d file descriptors%n", numberOfDescriptors);
     }
 
-    public void stat(String pathname) {
+    public void stat(final String pathname) {
         FileSystem.getInstance().printFileInformation(pathname);
     }
 
