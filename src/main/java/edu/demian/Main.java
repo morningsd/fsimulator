@@ -25,8 +25,12 @@ public class Main {
 
         operatingSystem.cd("/");
         operatingSystem.open("123.txt");
-        operatingSystem.write(1, 15);
-        operatingSystem.read(1, 16);
+        operatingSystem.write(1, 35);
+        operatingSystem.read(1, 38);
+
+        operatingSystem.seek(1, 30);
+        operatingSystem.read(1, 10);
+
         operatingSystem.close(1);
 
     }

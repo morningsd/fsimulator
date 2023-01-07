@@ -4,14 +4,16 @@ import edu.demian.filesystem.file.DirectoryFile;
 import edu.demian.filesystem.file.File;
 import edu.demian.filesystem.file.RegularFile;
 import edu.demian.filesystem.file.descriptor.FileDescriptor;
+import edu.demian.filesystem.file.descriptor.OpenFileDescriptor;
 import edu.demian.filesystem.file.util.Block;
 import edu.demian.filesystem.file.util.FileType;
 import edu.demian.filesystem.util.FileSystemUtils;
 import edu.demian.filesystem.util.LookupResponse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class FileSystem {
 
@@ -27,7 +29,7 @@ public class FileSystem {
     private final AtomicInteger openFileDescriptorIdCounter = new AtomicInteger(0);
 
     private final List<FileDescriptor> fileDescriptors = new LinkedList<>();
-    private final Map<Integer, RegularFile> openFileDescriptors = new HashMap<>();
+    private final Map<Integer, OpenFileDescriptor> openFileDescriptors = new HashMap<>();
 
     private static volatile FileSystem instance;
 
@@ -41,7 +43,8 @@ public class FileSystem {
 
     public int getOpenFileDescriptorId(RegularFile file) {
         int openFileDescriptorId = openFileDescriptorIdCounter.incrementAndGet();
-        openFileDescriptors.put(openFileDescriptorId, file);
+        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(openFileDescriptorId, 0, file);
+        openFileDescriptors.put(openFileDescriptorId, openFileDescriptor);
         return openFileDescriptorId;
     }
 
@@ -159,52 +162,125 @@ public class FileSystem {
     }
 
     public void readFromFile(int fileDescriptor, int sizeInBytes) {
-        RegularFile file = openFileDescriptors.get(fileDescriptor);
+        OpenFileDescriptor openFileDescriptor = openFileDescriptors.get(fileDescriptor);
+        if (openFileDescriptor == null) {
+            System.out.println("Unknown file descriptor");
+            return;
+        }
+
+        RegularFile file = openFileDescriptor.getRegularFile();
+
         List<Block> fileBlockList = file.getBlockList();
 
-        int numberOfBlocksToRead = sizeInBytes / Block.BLOCK_SIZE;
-        int remainder = sizeInBytes - numberOfBlocksToRead * Block.BLOCK_SIZE;
+        int offset = openFileDescriptor.getOffset();
 
-        if (numberOfBlocksToRead >= fileBlockList.size()) {
-            fileBlockList.forEach(block -> System.out.print(Arrays.toString(block.getData())));
-        } else {
-            for (int i = 0; i < numberOfBlocksToRead; i++) {
-                Block block = fileBlockList.get(i);
-                System.out.print(Arrays.toString(block.getData()));
+        int fileSizeInBytes = fileBlockList.size() * Block.BLOCK_SIZE;
+        if (offset > fileSizeInBytes) {
+            System.out.printf("Offset is bigger that fileSize: [offset = %d, filesize = %d]%n", offset, fileSizeInBytes);
+            return;
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (Block block : fileBlockList) {
+            try {
+                outputStream.write(block.getData());
+            } catch (IOException e) {
+                System.out.println("Can't read file data");
+                return;
             }
-            if (remainder > 0) {
-                System.out.print("[");
-                for (int i = 0; i < remainder; i++) {
-                    Block block = fileBlockList.get(numberOfBlocksToRead);
-                    byte[] data = block.getData();
-                    System.out.print(data[i] + " ");
-                }
-                System.out.println("]");
+        }
+
+        byte[] fileContent = outputStream.toByteArray();
+
+        int readBytes = 0;
+        for (int i = offset; i < fileContent.length; i++) {
+            System.out.print(fileContent[i] + " ");
+            readBytes++;
+            if (readBytes >= sizeInBytes) {
+                System.out.println();
+                return;
             }
         }
     }
 
     public void writeToFile(int fileDescriptor, int sizeInBytes) {
-        RegularFile file = openFileDescriptors.get(fileDescriptor);
+        OpenFileDescriptor openFileDescriptor = openFileDescriptors.get(fileDescriptor);
+        if (openFileDescriptor == null) {
+            System.out.println("Unknown file descriptor");
+            return;
+        }
+
+        RegularFile file = openFileDescriptor.getRegularFile();
+
         List<Block> fileBlockList = file.getBlockList();
 
-        int numberOfBlocksToWrite = sizeInBytes / Block.BLOCK_SIZE;
-        int remainder = sizeInBytes - numberOfBlocksToWrite * Block.BLOCK_SIZE;
+        int offset = openFileDescriptor.getOffset();
 
-        if (numberOfBlocksToWrite >= fileBlockList.size()) {
-            fileBlockList.forEach(block -> {
-              byte[] data = block.getData();
-                Arrays.fill(data, (byte) 1);
-            });
-        } else {
-            for (int i = 0; i < numberOfBlocksToWrite; i++) {
-                Block block = fileBlockList.get(i);
-                Arrays.fill(block.getData(), (byte) 1);
-            }
-            for (int i = 0; i < remainder; i++) {
-                Block block = fileBlockList.get(numberOfBlocksToWrite);
-                Arrays.fill(block.getData(), 0, remainder, (byte) 1);
+        int fileSizeInBytes = fileBlockList.size() * Block.BLOCK_SIZE;
+        if (offset > fileSizeInBytes) {
+            System.out.printf("Offset is bigger that fileSize: [offset = %d, filesize = %d]%n", offset, fileSizeInBytes);
+            return;
+        }
+
+        int startBlockToWritePosition = 0;
+        int remainderInStartBlock = 0;
+        if (offset > 0) {
+            startBlockToWritePosition = offset / Block.BLOCK_SIZE;
+            remainderInStartBlock = sizeInBytes - startBlockToWritePosition * Block.BLOCK_SIZE;
+        }
+
+        Block startBlock = fileBlockList.get(startBlockToWritePosition);
+        int wroteBytes = 0;
+        // write to the start block from the offset
+        while (wroteBytes < sizeInBytes && wroteBytes + remainderInStartBlock < Block.BLOCK_SIZE) {
+            byte[] data = startBlock.getData();
+            for (int i = remainderInStartBlock; i < data.length; i++) {
+                data[i] =(byte) 1;
+                wroteBytes++;
+                if (wroteBytes >= sizeInBytes) {
+                    return;
+                }
             }
         }
+        for (int i = startBlockToWritePosition + 1; i < fileBlockList.size(); i++) {
+            Block blockToWrite = fileBlockList.get(i);
+            byte[] data = blockToWrite.getData();
+            for (int j = 0; j < data.length; j++) {
+                data[j] = (byte) 1;
+                wroteBytes++;
+                if (wroteBytes >= sizeInBytes) {
+                    return;
+                }
+            }
+        }
+
+        ///////////////////////////////////////////////
+//        int numberOfBlocksToWrite = sizeInBytes / Block.BLOCK_SIZE;
+//        int remainder = sizeInBytes - numberOfBlocksToWrite * Block.BLOCK_SIZE;
+//
+//        if (numberOfBlocksToWrite >= fileBlockList.size()) {
+//            fileBlockList.forEach(block -> {
+//                byte[] data = block.getData();
+//                Arrays.fill(data, (byte) 1);
+//            });
+//        } else {
+//            for (int i = 0; i < numberOfBlocksToWrite; i++) {
+//                Block block = fileBlockList.get(i);
+//                Arrays.fill(block.getData(), (byte) 1);
+//            }
+//            for (int i = 0; i < remainder; i++) {
+//                Block block = fileBlockList.get(numberOfBlocksToWrite);
+//                Arrays.fill(block.getData(), 0, remainder, (byte) 1);
+//            }
+//        }
+    }
+
+    public void changeOffsetForFile(int fileDescriptor, int offset) {
+        OpenFileDescriptor openFileDescriptor = openFileDescriptors.get(fileDescriptor);
+        if (openFileDescriptor == null) {
+            System.out.println("Unknown file descriptor");
+            return;
+        }
+        openFileDescriptor.setOffset(offset);
     }
 }

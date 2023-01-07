@@ -10,6 +10,8 @@ import java.util.List;
 
 public abstract class File {
 
+    private static final int INITIAL_BLOCK_QUANTITY = 4;
+
     private final FileDescriptor descriptor;
 
     private String name;
@@ -22,8 +24,9 @@ public abstract class File {
         }
         this.name = name;
         this.descriptor = new FileDescriptor(FileSystem.getInstance().getAvailableFileDescriptorId());
-        blockList.add(new Block());
-        blockList.add(new Block());
+        for (int i = 0; i < INITIAL_BLOCK_QUANTITY; i++) {
+            blockList.add(new Block());
+        }
     }
 
     public FileDescriptor getDescriptor() {

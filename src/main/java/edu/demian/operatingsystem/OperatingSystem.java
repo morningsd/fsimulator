@@ -38,7 +38,6 @@ public class OperatingSystem {
     }
 
     public void open(String pathname) {
-        // regular file!
         int fileDescriptor = FileSystem.getInstance().openFile(pathname);
         System.out.printf("File descriptor of file %s = %d%n", pathname, fileDescriptor);
     }
@@ -47,9 +46,9 @@ public class OperatingSystem {
         FileSystem.getInstance().closeFile(fileDescriptor);
     }
 
-//    public void seek(int fileDescriptor, int offset) {
-//        FileSystem.getInstance().changeOffsetForFile(fileDescriptor, offset);
-//    }
+    public void seek(int fileDescriptor, int offset) {
+        FileSystem.getInstance().changeOffsetForFile(fileDescriptor, offset);
+    }
 
     public void read(int fileDescriptor, int sizeInBytes) {
         //TODO: think what to return from this method and print to console
