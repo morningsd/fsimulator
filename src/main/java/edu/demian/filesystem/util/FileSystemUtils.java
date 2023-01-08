@@ -24,12 +24,12 @@ public class FileSystemUtils {
             // absolute path
             // /a/b/c -> [a, b, c]
             startDirectory = FileSystem.getInstance().getRootDirectory();
-            pathParts = pathname.substring(1).split("//");
+            pathParts = pathname.substring(1).split("/");
         } else {
             // relative path
             // a/b/c
             startDirectory = FileSystem.getInstance().getCurrentDirectory();
-            pathParts = pathname.split("//");
+            pathParts = pathname.split("/");
         }
         DirectoryFile lastDirectory = traverseToTheLastDirectory(pathParts, startDirectory);
         fileFound = lastDirectory.getContent().stream().filter(file -> file.getName().equals(pathParts[pathParts.length - 1])).findFirst().orElse(null);
@@ -49,32 +49,7 @@ public class FileSystemUtils {
         return fileType;
     }
 
-    // TODO: refactor
-    public static void createRegularFile(String pathname) {
-        if (pathname.startsWith(FileSystem.LINK_TO_ROOT_DIRECTORY)) {
-            // absolute path
-            // /a/b/c/123.txt
-//            DirectoryFile startDirectory = FileSystem.getInstance().getRootDirectory();
-//            final String[] pathParts = pathname.substring(1).split("//");
-//            DirectoryFile lastDirectory = traverseToTheLastDirectory(pathParts, startDirectory);
-//            RegularFile regularFile = RegularFile.createInstance(pathname);
-//            lastDirectory.getContent().add(regularFile);
-        } else if (pathname.contains("/")) {
-            // relative path a/b/c/123.txt
-//            DirectoryFile startDirectory = FileSystem.getInstance().getCurrentDirectory();
-//            final String[] pathParts = pathname.split("//");
-//            DirectoryFile lastDirectory = traverseToTheLastDirectory(pathParts, startDirectory);
-//            RegularFile regularFile = RegularFile.createInstance(pathname);
-//            lastDirectory.getContent().add(regularFile);
-        } else {
-            // create a regular file in current directory
-            RegularFile regularFile = RegularFile.createInstance(pathname);
-            FileSystem.getInstance().getCurrentDirectory().getContent().add(regularFile);
-        }
-    }
-
     private static DirectoryFile traverseToTheLastDirectory(final String[] pathParts, DirectoryFile startDirectory) {
-        System.out.println("Path parts: " + Arrays.toString(pathParts));
         for (int i = 0; i < pathParts.length - 1; i++) {
             String pathPart = pathParts[i];
             List<File> startDirectoryContent = startDirectory.getContent();
@@ -89,7 +64,7 @@ public class FileSystemUtils {
 
     public static LookupResponse lookup(String pathname, boolean followSymbolicLinks) {
         if (FileSystem.LINK_TO_ROOT_DIRECTORY.equals(pathname)) {
-            return new LookupResponse(null, FileSystem.getInstance().getRootDirectory(), null);
+            return new LookupResponse(FileSystem.LINK_TO_ROOT_DIRECTORY, FileSystem.getInstance().getRootDirectory(), FileSystem.getInstance().getRootDirectory());
         }
 
         DirectoryFile startDirectory;
@@ -97,16 +72,21 @@ public class FileSystemUtils {
         String[] pathParts;
         if (pathname.startsWith("/")) {
             startDirectory = FileSystem.getInstance().getRootDirectory();
-            pathParts = pathname.substring(1).split("//");
+            pathParts = pathname.substring(1).split("/");
         } else {
             startDirectory = FileSystem.getInstance().getCurrentDirectory();
-            pathParts = pathname.split("//");
+            pathParts = pathname.split("/");
         }
-        System.out.println("Path parts: " + Arrays.toString(pathParts));
         String fileName = pathParts[pathParts.length - 1];
         if (pathParts.length == 1) {
+            if (findFileByPathname(fileName) instanceof SymbolicLinkFile) {
+                if (followSymbolicLinks) {
+                    LookupResponse lookupResponse = lookup(((SymbolicLinkFile) findFileByPathname(fileName)).getContent(), true);
+                    return lookupResponse;
+                }
+            }
             // TODO: add pointer to parent directory
-            return new LookupResponse(fileName, FileSystem.getInstance().getCurrentDirectory(), null);
+            return new LookupResponse(fileName, FileSystem.getInstance().getCurrentDirectory(), FileSystem.getInstance().getCurrentDirectory().getParentDirectory());
         } else {
             // a, b, c, 123.txt
             for (int i = 0; i < pathParts.length - 1; i++) {
@@ -126,9 +106,8 @@ public class FileSystemUtils {
         } else if (fileFound instanceof RegularFile) {
             return new LookupResponse(fileName, null, parentDirectory);
         }
-        // TODO: add for symbolic links
 
-        throw new RuntimeException("Lookup failed");
+        return new LookupResponse(fileName, parentDirectory, null);
     }
 
 

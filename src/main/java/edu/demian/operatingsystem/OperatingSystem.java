@@ -59,17 +59,17 @@ public class OperatingSystem {
         FileSystem.getInstance().writeToFile(fileDescriptor, sizeInBytes);
     }
 
-//    public void link(String filePathname, String hardLinkPathname) {
-//        FileSystem.getInstance().link(filePathname, hardLinkPathname);
-//    }
-//
-//    public void unlink(String pathname) {
-//        FileSystem.getInstance().unlink(pathname);
-//    }
-//
-//    public void truncate(String pathname, int sizeInBytes) {
-//        FileSystem.getInstance().changeFileSize(pathname, sizeInBytes);
-//    }
+    public void link(String filePathname, String hardLinkPathname) {
+        FileSystem.getInstance().link(filePathname, hardLinkPathname);
+    }
+
+    public void unlink(String pathname) {
+        FileSystem.getInstance().unlink(pathname);
+    }
+
+    public void truncate(String pathname, int sizeInBytes) {
+        FileSystem.getInstance().changeFileSize(pathname, sizeInBytes);
+    }
 
     public void mkdir(String pathname) {
         FileSystem.getInstance().createDirectory(pathname);
@@ -87,8 +87,8 @@ public class OperatingSystem {
         FileSystem.getInstance().printWorkingDirectory();
     }
 
-//    public void symlink(String content, String pathname) {
-//        FileSystem.getInstance().createSymbolicLink(content, pathname);
-//    }
+    public void symlink(String pathname, String content) {
+        FileSystem.getInstance().createSymbolicLink(pathname, content);
+    }
 
 }
